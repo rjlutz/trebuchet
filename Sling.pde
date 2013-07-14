@@ -34,16 +34,24 @@ class Sling {
     body.createFixture(fd);
   }
   
-   Vec2 getAnchorA() {
+   Vec2 getLocalAnchorA() {
     float a = body.getAngle();
     float hh = box2d.scalarPixelsToWorld(h/2);
     return new Vec2(-hh * sin(a), hh * cos(a));
   }
   
-  Vec2 getAnchorB() {
+  Vec2 getLocalAnchorB() {
     float a = body.getAngle();
     float hh = box2d.scalarPixelsToWorld(h/2);
     return new Vec2(hh * sin(a), -hh * cos(a));
+  }
+  
+  Vec2 getWorldAnchorB() {
+    return body.getWorldCenter().add(getLocalAnchorB());
+  }
+  
+  Vec2 getPixelsAnchorB(PBox2D box2d) {
+    return box2d.coordWorldToPixels(getWorldAnchorB());
   }
 
   // This function removes the particle from the box2d world

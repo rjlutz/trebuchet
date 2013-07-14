@@ -10,13 +10,17 @@ class Projectile {
     // Add the projectile to the box2d world
     makeBody(x, y, r);
   }
+  
+  Projectile(Vec2 pixelvec, float r) {
+    makeBody(pixelvec.x, pixelvec.y, r);
+  }
 
   // This function removes the particle from the box2d world
   void killBody() {
     box2d.destroyBody(body);
   }
   
-  Vec2 getAnchor() {
+  Vec2 getLocalAnchorA() {
     //Vec2 anchor = new Vec2(0,-box2d.scalarPixelsToWorld(r));
     Vec2 anchor = new Vec2(0,0);
     return anchor;
@@ -69,7 +73,7 @@ class Projectile {
     FixtureDef fd = new FixtureDef();
     fd.shape = cs;
     // Parameters that affect physics
-    fd.density = 10;
+    fd.density = 100;
     fd.friction = 0.9;
     fd.restitution = 0.1;
     

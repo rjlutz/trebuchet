@@ -1,6 +1,6 @@
 enum WeaponState
 {
-    STOPPED,MOVING
+    START, LAUNCHING, LAUNCHED, LANDED, REST
 };
 
 

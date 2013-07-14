@@ -4,7 +4,6 @@ import org.jbox2d.common.*;
 import org.jbox2d.dynamics.*;
 
 // Class to describe a fixed plus pivoting object
-
 class Lever {
 
   // Our object is two boxes and one joint
@@ -12,6 +11,8 @@ class Lever {
   RevoluteJoint joint;
   Box support;
   Box lever;
+  
+  final float beamratio = 3.75;
   
   int leverW, leverH, supportW, supportH;
   
@@ -35,7 +36,7 @@ class Lever {
   
   Vec2 getLocalAnchorB() {
     float a = lever.body.getAngle();
-    float hw = box2d.scalarPixelsToWorld(3 * leverW/2);
+    float hw = box2d.scalarPixelsToWorld(beamratio * leverW/2);
     return new Vec2(-hw * cos(a), -hw * sin(a));
   }
   
@@ -61,9 +62,14 @@ class Lever {
     // Define joint as between two bodies
     RevoluteJointDef rjd = new RevoluteJointDef();
     rjd.initialize(support.body, lever.body, lever.body.getWorldCenter());
-    // Create the joint
-    joint = (RevoluteJoint) box2d.world.createJoint(rjd);
     
+    // needed to slow the pendulum down
+    rjd.maxMotorTorque =6000f;
+    rjd.motorSpeed = 0.0f;
+    rjd.enableMotor = true;
+    
+    // Create the joint
+    joint = (RevoluteJoint) box2d.world.createJoint(rjd); 
   }
 
   void display() {
@@ -80,7 +86,7 @@ class Lever {
     Vec2 ctr = box2d.coordWorldToPixels(lever.body.getWorldCenter());
     float a = lever.body.getAngle();
     Vec2 end1 = new Vec2(-leverW/2, 0);
-    Vec2 end2 = new Vec2(-3*leverW/2, 0);
+    Vec2 end2 = new Vec2(-beamratio*leverW/2, 0);
     pushMatrix();
     translate(ctr.x,ctr.y);
     rotate(-a);

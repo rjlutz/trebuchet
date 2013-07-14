@@ -41,7 +41,7 @@ class CounterWeight {
     FixtureDef fd = new FixtureDef();
     fd.shape = ps;
     // Parameters that affect physics
-    fd.density = 1000;
+    fd.density = 800;
     fd.friction = 0.9;
     fd.restitution = 0.01;
 
