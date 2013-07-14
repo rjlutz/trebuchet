@@ -1,0 +1,6 @@
+enum WeaponState
+{
+    STOPPED,MOVING
+};
+
+
