@@ -10,6 +10,7 @@ class Weapon {
   Projectile projectile;
   RevoluteJoint rj, rjS, rjP;
   WeaponState state;
+  Block block;
   
   Weapon() {
     state = WeaponState.START;
@@ -18,6 +19,7 @@ class Weapon {
     lever = new Lever(100, height-70, 50, 4, 4, 15);
     sling = new Sling(lever.getPixelsAnchorB(box2d), 1, 20);
     projectile = new Projectile(sling.getPixelsAnchorB(box2d), 5);
+    block = new Block(125, height-20, 10, 40);
 
     //joint: lever to counterweight
     RevoluteJointDef rjd = new RevoluteJointDef();
@@ -54,9 +56,15 @@ class Weapon {
     sling = null;
   }
 
-  void start() {
-    state=WeaponState.LAUNCHING;
-    lever.lever.body.applyLinearImpulse(new Vec2(0, -7000), lever.getWorldAnchorB());
+//  void start() {
+//    state=WeaponState.LAUNCHING;
+//    lever.lever.body.applyLinearImpulse(new Vec2(0, -7000), lever.getWorldAnchorB());
+//  }
+  
+  void applylift() {
+    //lever.lever.body.applyForce(new Vec2(0, -700), lever.getWorldAnchorB());
+    if (block.body != null) block.killBody();
+    lever.lever.body.applyForce(new Vec2(0, -10000), lever.getWorldAnchorB());
   }
 
   void display() {
@@ -64,8 +72,9 @@ class Weapon {
     // display the trebuchet components
     cw.display();
     lever.display();
-    if (sling != null) sling.display();
     projectile.display();
+    if (sling != null) sling.display();
+    if (block.body != null) block.display();
 
     //line connecting cw and lever
     Vec2 end1 = cw.getPixelsAnchorA(box2d);

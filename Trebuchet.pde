@@ -6,7 +6,7 @@ PBox2D box2d;
 Boundary ground;
 Weapon weapon;
 
-boolean paused = true;
+boolean paused = false;
 
 void setup() {
   size(1200, 500);
@@ -25,8 +25,9 @@ void gameinit() {
 void draw() {
   background(255);
   if (!paused) {
-    if (weapon.getState() == WeaponState.START) {
-      weapon.start();
+    if (weapon.getState() == WeaponState.LIFTING) {
+      println("should be lifting");
+      weapon.applylift();
     }
     box2d.step();  // We must always step through time!
   }
@@ -37,27 +38,36 @@ void draw() {
   
   // test for launch
   if (weapon.getState() == WeaponState.LAUNCHING) {
-    if (weapon.getSlingAngle() < radians(-140)) { //launch
-      weapon.launch();
-    }
+//    if (weapon.getSlingAngle() < radians(-140)) { //launch
+//      weapon.launch();
+//    }
   }
   
   // test for landing of projectile
   float projelev = box2d.coordWorldToPixels(weapon.getProjectile().getWorldCenter()).y;
-  // projectile.body.getWorldCenter()
-  if (weapon.getState() != WeaponState.LANDED && projelev > (height-20)) {
+  if (weapon.getState() == WeaponState.LAUNCHED && projelev > (height-20)) {
       weapon.landed();
   }
   
 }
 
 void mousePressed() {
-  paused = !paused;
+  if (weapon.getState() == WeaponState.START) {
+    weapon.state = WeaponState.LIFTING;
+  }
+}
+
+void mouseReleased() {
+  if (weapon.getState() == WeaponState.LIFTING) {
+    weapon.state = WeaponState.LAUNCHING;
+  } else if(weapon.getState() == WeaponState.LAUNCHING) {
+   weapon.launch();
+  }
+  
 }
 
 void keyPressed() {
-  if (key == 'r') {
-    gameinit();
-  }
+  if (key == 'r')   gameinit();
+  if (key == 'p')  paused = !paused;
 }
 

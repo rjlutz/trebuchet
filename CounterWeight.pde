@@ -23,8 +23,8 @@ class CounterWeight {
     // Build Body
     BodyDef bd = new BodyDef();      
     bd.type = BodyType.DYNAMIC;
-    this.x = x;
-    this.y = y;
+//    this.x = x;
+//    this.y = y;
     bd.position.set(box2d.coordPixelsToWorld(x,y));
     body = box2d.createBody(bd);
     body.setFixedRotation(true);
