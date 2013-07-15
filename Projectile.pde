@@ -26,6 +26,10 @@ class Projectile {
     return anchor;
   }
   
+  Vec2 getWorldCenter() {
+    return body.getWorldCenter();  
+  }
+  
 
 //  // Is the particle ready for deletion?
 //  boolean done() {
