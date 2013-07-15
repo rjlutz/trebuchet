@@ -11,9 +11,10 @@ class Weapon {
   RevoluteJoint rj, rjS, rjP;
   WeaponState state;
   Block block;
-  
+
   Weapon() {
-    state = WeaponState.START;
+ 
+    setState(WeaponState.START);
 
     cw = new CounterWeight(125, height-50, 20, 20);
     lever = new Lever(100, height-70, 50, 4, 4, 15);
@@ -42,27 +43,45 @@ class Weapon {
     rjdP.localAnchorA = projectile.getLocalAnchorA();
     rjdP.localAnchorB = sling.getLocalAnchorB();
     rjP = (RevoluteJoint) box2d.world.createJoint(rjdP);
+
+    //soundinit();
   }
-  
+
   WeaponState getState() {
     return state;
   }
 
-  void launch() {
-    box2d.world.destroyJoint((RevoluteJoint)rjP);
-    rjP = null;
-    state=WeaponState.LAUNCHED;
-    box2d.world.destroyBody(sling.body);
-    sling = null;
+  void setState(WeaponState w) {
+    if (w == WeaponState.START) {
+      //
+    } 
+    else if (w == WeaponState.LIFTING) {
+      slowwind.cue(0);
+      slowwind.play();
+    } 
+    else if (w == WeaponState.LAUNCHING) {
+      slowwind.stop();
+    } 
+    else if (w == WeaponState.LAUNCHED) {
+      release.cue(0);
+      release.play();
+      box2d.world.destroyJoint((RevoluteJoint)rjP);
+      rjP = null;
+      box2d.world.destroyBody(sling.body);
+      sling = null;
+    } 
+    else if (w == WeaponState.LANDED) {
+      println("strike!");
+      slam.cue(0);
+      slam.play();
+    } 
+    else if (w == WeaponState.REST) {
+      //
+    }
+    state=w;
   }
 
-//  void start() {
-//    state=WeaponState.LAUNCHING;
-//    lever.lever.body.applyLinearImpulse(new Vec2(0, -7000), lever.getWorldAnchorB());
-//  }
-  
   void applylift() {
-    //lever.lever.body.applyForce(new Vec2(0, -700), lever.getWorldAnchorB());
     if (block.body != null) block.killBody();
     lever.lever.body.applyForce(new Vec2(0, -10000), lever.getWorldAnchorB());
   }
@@ -84,18 +103,9 @@ class Weapon {
     line(end1.x, end1.y, end2.x, end2.y);
   }
 
-  void landed() {
-    println("strike!");
-    state=WeaponState.LANDED;
-  }
-  
-  float getSlingAngle() {
-    return sling.body.getAngle();
-  }
-  
   Projectile getProjectile() {
     return projectile;
   }
-  
+
 }
 
