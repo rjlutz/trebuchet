@@ -57,6 +57,10 @@ class CounterWeight {
     setup();
   }
   
+  void killBody() {
+    box2d.destroyBody(body);
+  }
+  
   Vec2 getLocalAnchorA() {
     return new Vec2(0,box2d.scalarPixelsToWorld(h/2));
   }

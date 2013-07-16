@@ -71,6 +71,11 @@ class Lever {
     // Create the joint
     joint = (RevoluteJoint) box2d.world.createJoint(rjd); 
   }
+  
+  void killAll() {
+    box2d.destroyBody(lever.body);
+    box2d.destroyBody(support.body);
+  }
 
   void display() {
     

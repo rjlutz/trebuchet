@@ -14,6 +14,15 @@ class Projectile {
   Projectile(Vec2 pixelvec, float r) {
     makeBody(pixelvec.x, pixelvec.y, r);
   }
+  
+  float getVelocity() {
+    return body.getLinearVelocity().length();
+  }
+  
+  float getAngularVelocity() {
+    return body.getAngularVelocity();
+  }
+  
 
   // This function removes the particle from the box2d world
   void killBody() {
@@ -79,7 +88,7 @@ class Projectile {
     // Parameters that affect physics
     fd.density = 100;
     fd.friction = 0.9;
-    fd.restitution = 0.1;
+    fd.restitution = 0.01;
     
     // Attach fixture to body
     body.createFixture(fd);

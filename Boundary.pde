@@ -42,5 +42,9 @@ class Boundary {
     rectMode(CENTER);
     rect(x,y,w,h);
   }
+  
+  void killBody() {
+    box2d.destroyBody(b);
+  }
 
 }

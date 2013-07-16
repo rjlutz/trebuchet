@@ -13,77 +13,120 @@ class Weapon {
   Block block;
 
   Weapon() {
- 
     setState(WeaponState.START);
-
-    cw = new CounterWeight(125, height-50, 20, 20);
-    lever = new Lever(100, height-70, 50, 4, 4, 15);
-    sling = new Sling(lever.getPixelsAnchorB(box2d), 1, 20);
-    projectile = new Projectile(sling.getPixelsAnchorB(box2d), 5);
-    block = new Block(125, height-20, 10, 40);
-
-    //joint: lever to counterweight
-    RevoluteJointDef rjd = new RevoluteJointDef();
-    rjd.bodyA = lever.getLeverBody();
-    rjd.bodyB = cw.body;
-    rjd.localAnchorA = lever.getLocalAnchorA();
-    rjd.localAnchorB = cw.getLocalAnchorA();
-    rj = (RevoluteJoint) box2d.world.createJoint(rjd);
-
-    //joint: lever to sling
-    RevoluteJointDef rjdS = new RevoluteJointDef();
-    rjdS.initialize(lever.getLeverBody(), sling.body, lever.getWorldAnchorB());
-    rjd.localAnchorA = lever.getLocalAnchorB();
-    rjd.localAnchorB = sling.getLocalAnchorA();
-    rjS = (RevoluteJoint) box2d.world.createJoint(rjdS);
-
-    //joint: sling to projectile 
-    RevoluteJointDef rjdP = new RevoluteJointDef();
-    rjdP.initialize(projectile.body, sling.body, sling.getPixelsAnchorB(box2d));
-    rjdP.localAnchorA = projectile.getLocalAnchorA();
-    rjdP.localAnchorB = sling.getLocalAnchorB();
-    rjP = (RevoluteJoint) box2d.world.createJoint(rjdP);
-
-    //soundinit();
   }
 
   WeaponState getState() {
     return state;
   }
+  
+  void makeTreb() {
+   // establish/reestablish trebuchet componenets
+      // when re-establishing, need to remove the item from box2d's model before establishing replacement object 
+      if (cw != null) cw.killBody();
+      cw = new CounterWeight(125, height-50, 20, 20);
+      if (lever != null) lever.killAll();
+      lever = new Lever(100, height-70, 50, 4, 4, 15);
+      if (sling != null) sling.killBody();
+      sling = new Sling(lever.getPixelsAnchorB(box2d), 1, 20);
+      if (block != null) block.killBody();
+      block = new Block(125, height-20, 10, 40);    //joint: lever to counterweight
+      if (projectile != null) projectile.killBody();
+      projectile = new Projectile(sling.getPixelsAnchorB(box2d), 5);
+      
+      //joint: cw to lever
+      RevoluteJointDef rjd = new RevoluteJointDef();
+      rjd.bodyA = lever.getLeverBody();
+      rjd.bodyB = cw.body;
+      rjd.localAnchorA = lever.getLocalAnchorA();
+      rjd.localAnchorB = cw.getLocalAnchorA();
+      rj = (RevoluteJoint) box2d.world.createJoint(rjd);
+
+      //joint: lever to sling
+      RevoluteJointDef rjdS = new RevoluteJointDef();
+      rjdS.initialize(lever.getLeverBody(), sling.body, lever.getWorldAnchorB());
+      rjd.localAnchorA = lever.getLocalAnchorB();
+      rjd.localAnchorB = sling.getLocalAnchorA();
+      rjS = (RevoluteJoint) box2d.world.createJoint(rjdS);
+    
+      //joint: sling to projectile 
+      RevoluteJointDef rjdP = new RevoluteJointDef();
+      rjdP.initialize(projectile.body, sling.body, sling.getPixelsAnchorB(box2d));
+      rjdP.localAnchorA = projectile.getLocalAnchorA();
+      rjdP.localAnchorB = sling.getLocalAnchorB();
+      rjP = (RevoluteJoint) box2d.world.createJoint(rjdP); 
+  }
 
   void setState(WeaponState w) {
     if (w == WeaponState.START) {
-      //
-    } 
-    else if (w == WeaponState.LIFTING) {
-      slowwind.cue(0);
-      slowwind.play();
-    } 
-    else if (w == WeaponState.LAUNCHING) {
-      slowwind.stop();
-    } 
-    else if (w == WeaponState.LAUNCHED) {
-      release.cue(0);
-      release.play();
+      
+      makeTreb();
+      
+    } else if (w == WeaponState.LIFTING) {
+      
+      if (!disableSounds) {
+        slowwind.cue(0);
+        slowwind.play();
+      }
+      
+    } else if (w == WeaponState.LAUNCHING) {
+      
+      if (!disableSounds) {
+        slowwind.stop();
+      }
+      
+    } else if (w == WeaponState.LAUNCHED) {
+      
+      if (!disableSounds) {
+        release.play();
+      }
       box2d.world.destroyJoint((RevoluteJoint)rjP);
       rjP = null;
-      box2d.world.destroyBody(sling.body);
-      sling = null;
-    } 
-    else if (w == WeaponState.LANDED) {
-      println("strike!");
-      slam.cue(0);
-      slam.play();
-    } 
-    else if (w == WeaponState.REST) {
-      //
+      
+    } else if (w == WeaponState.LANDED) {
+      
+      if (!disableSounds) {
+        slam.play();
+      }
+      
+    } else if (w == WeaponState.REST) {
+      
+      // TODO maybe animate the bould explding here, with a sound
+      
     }
     state=w;
   }
+  
+  void updateState() {
+    
+    // test for landing of projectile
+    if (weapon.getState() == WeaponState.LAUNCHED) {
+      float projelev = box2d.coordWorldToPixels(weapon.getProjectile().getWorldCenter()).y;
+      if(projelev > (height-20)) {
+        weapon.setState(WeaponState.LANDED);
+      }
+    }
+  
+    //check for projectile landed and stopped moving
+    if (weapon.getState() == WeaponState.LANDED) {
+      float boulderX = box2d.coordWorldToPixels(weapon.getProjectile().getWorldCenter()).x;
+      if (( projectile.getVelocity() < 0.10 && projectile.getAngularVelocity() < 0.01) ||
+            boulderX < 0 || 
+            boulderX > width) { 
+        weapon.setState(WeaponState.REST);
+      }
+    }
+    
+  }
 
   void applylift() {
-    if (block.body != null) block.killBody();
+   
+    if (block != null) {
+      block.killBody();
+      block = null;
+    }
     lever.lever.body.applyForce(new Vec2(0, -10000), lever.getWorldAnchorB());
+    
   }
 
   void display() {
@@ -93,7 +136,7 @@ class Weapon {
     lever.display();
     projectile.display();
     if (sling != null) sling.display();
-    if (block.body != null) block.display();
+    if (block != null) block.display();
 
     //line connecting cw and lever
     Vec2 end1 = cw.getPixelsAnchorA(box2d);
@@ -101,11 +144,25 @@ class Weapon {
     stroke(50);
     strokeWeight(1);
     line(end1.x, end1.y, end2.x, end2.y);
+    
   }
 
   Projectile getProjectile() {
+    
     return projectile;
+    
+  }
+  
+  void killAll() {
+    
+    if (cw != null) cw.killBody();
+    if (lever != null) lever.killAll();
+    if (projectile != null) projectile.killBody();
+    if (sling != null) sling.killBody();
+    if (block != null) block.killBody();
+    
   }
 
 }
+
 

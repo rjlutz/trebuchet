@@ -34,9 +34,7 @@ class Block {
   }
  
   void killBody() {
-    println("killing block body");
     box2d.destroyBody(body);
-    body = null;
   }
   
   void display() {
