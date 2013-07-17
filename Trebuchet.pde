@@ -8,6 +8,8 @@
 
 // the nature of code
 
+// angry birds ref image http://www.toptechreviews.net/wp-content/uploads/2013/01/angry_birds.jpg
+
 import pbox2d.*;
 import org.jbox2d.dynamics.joints.*;
 import org.jbox2d.dynamics.contacts.*;
@@ -32,6 +34,7 @@ boolean gameover;
 String gamemessage;
 
 PFont f;
+PImage background;
 
 void setup() {
   size(1200, 500);
@@ -43,6 +46,7 @@ void setup() {
   soundinit();
   if (!disableSounds) loop.play();
   f = createFont("Arial",16,true); // Arial, 16 point, anti-aliasing on
+  background = loadImage("treb-back.jpg");
 }
 
 void gameinit() {
@@ -87,6 +91,7 @@ void soundinit() {
 void draw() {
 
   background(255);
+  image(background,0,0);
   if (!paused) {
     if (weapon.getState() == WeaponState.LIFTING) {
       weapon.applylift();
@@ -105,9 +110,7 @@ void draw() {
   textFont(f);                 
   fill(255,0,0);                       
   text(numboulders,50,50); 
-  
-  println("projectile velocity is " + weapon.getProjectile().getVelocity() + ", angular vel =" + weapon.getProjectile().getAngularVelocity() +  " structure standing is " + structure.isStanding());
-  
+   
   if (weapon.getState() == WeaponState.REST) {
    if (!gameover){
      numboulders--; 

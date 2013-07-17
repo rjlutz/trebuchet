@@ -21,16 +21,18 @@ class Structure {
   }
  
  boolean isStanding() {
-   boolean demoed = false;
+   
    boolean standing = true;
-   for (StoneBeam beam : beams) {
-     float delta = abs(beam.body.getAngle());
-     print(delta + " ");
-     if (delta > PI/3) { // PI/3 = 60 degrees 
-       standing = standing & false;
-     }
+   
+   StoneBeam topbeam = beams.get(beams.size()-1);
+   StoneBeam fourthbeam = beams.get(3);
+   
+   float topheight = box2d.coordWorldToPixels(topbeam.body.getWorldCenter()).y;
+   float fourthheight = box2d.coordWorldToPixels(fourthbeam.body.getWorldCenter()).y;
+   
+   if (topheight > height-40 && fourthheight > height-40) {
+       standing = false;
    }
-   println();
    return standing;
  }
   

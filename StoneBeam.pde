@@ -25,7 +25,7 @@ class StoneBeam {
     FixtureDef fd = new FixtureDef();
     fd.shape = ps;
     // Parameters that affect physics
-    fd.density = 300;
+    fd.density = 150;
     fd.friction = 0.5;
     fd.restitution = 0.1;
 
