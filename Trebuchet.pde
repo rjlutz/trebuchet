@@ -31,17 +31,17 @@ Structure structure;
 
 int numboulders = 0;
 boolean paused = false;
-boolean disableSounds = true; // true for faster debugging, false for production
-boolean gameover;
+boolean disableSounds = false; // true for faster debugging, false for production
+boolean gameover = true;
 String gamemessage;
 
 PFont f;
 PImage background, boulder, bigboulder;
 color bgColor;
+PlayButton playbutton;
 
 void setup() {
   size(1200, 500);
-  //background(0);
   box2d = new PBox2D(this);
   box2d.createWorld();
   box2d.setGravity(0, -10);
@@ -53,11 +53,13 @@ void setup() {
   boulder = loadImage("boulder.png");        // use png for transparency
   bigboulder = loadImage("boulder.png"); 
   bigboulder.resize(bigboulder.width*2, bigboulder.height*2);              // for the 'boulders remaining' key
+  
+  playbutton = new PlayButton(width/2, height/2+40, 148, 91);
 }
 
 void gameinit() {
   numboulders = 5;
-  gameover = false;
+  gamemessage = "";
   if (ground != null) ground.killBody();
   ground = new Boundary(width/2, height-31, width, 10);
   if (structure != null) structure.killAll();
@@ -139,11 +141,17 @@ void draw() {
     textAlign(CENTER);
     fill (bgColor);
     text (gamemessage, width/2, height/2);
+    playbutton.display();
   }
   
 }
 
 void mousePressed() {
+  if (gameover && playbutton.contains(mouseX, mouseY)) {
+    gameover = false;
+    gameinit();
+    return;
+  }
   if (!gameover && weapon.getState() == WeaponState.START) {
     weapon.setState(WeaponState.LIFTING);
   }
