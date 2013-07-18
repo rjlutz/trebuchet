@@ -5,6 +5,8 @@ class StoneBeam {
   Body body;
   float w, h;
   
+  PImage stonesmall, stonebig;
+  
   StoneBeam(int _x, int _y, int _w, int _h) {
     w = _w;
     h = _h;
@@ -31,6 +33,9 @@ class StoneBeam {
 
     // Attach Fixture to Body               
     body.createFixture(fd);
+    
+    stonesmall = loadImage("stonesmall.png");
+    stonebig = loadImage("stonebig.png");
   }
  
   void killBody() {
@@ -41,14 +46,21 @@ class StoneBeam {
     Vec2 pos = box2d.getBodyPixelCoord(body);
     float a = body.getAngle();
 
-    rectMode(PConstants.CENTER);
     pushMatrix();
     translate(pos.x,pos.y);
     rotate(-a);
-    fill(225);
-    stroke(100);
-    strokeWeight(3);
-    rect(0,0,w,h);
+
+    if (h == 60) {
+      image(stonesmall, -stonesmall.width/2, -stonesmall.height/2);
+    } else if (w == 90) {
+      image(stonebig, -stonebig.width/2, -stonebig.height/2);
+    } else {
+      rectMode(PConstants.CENTER);
+      fill(225);
+      stroke(100);
+      strokeWeight(3);
+      rect(0,0,w,h);
+    }
     popMatrix();
   }
   

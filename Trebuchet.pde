@@ -48,7 +48,7 @@ void setup() {
   gameinit();
   soundinit();
   if (!disableSounds) loop.play();
-  f = createFont("Arial", 16, true);           // Arial, 16 point, anti-aliasing on
+  f = createFont("Handwriting-Dakota", 16, true);           // Arial, 16 point, anti-aliasing on
   background = loadImage("treb-back.jpg");
   boulder = loadImage("boulder.png");        // use png for transparency
   bigboulder = loadImage("boulder.png"); 
@@ -120,7 +120,7 @@ void draw() {
   image(bigboulder, 40, 50);
   textFont(f, 40);                 
   fill(126, 126, 126);                       
-  text(numboulders, 80, 76); 
+  text(numboulders, 80, 68); 
 
   if (weapon.getState() == WeaponState.REST) {
     if (!gameover) {
