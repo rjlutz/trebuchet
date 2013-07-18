@@ -15,6 +15,7 @@ class Lever {
   final float beamratio = 3.75;
   
   int leverW, leverH, supportW, supportH;
+  PImage trebframe, trebbeamthick, trebbeamthin;
   
   Body getLeverBody() {
     return lever.body;
@@ -70,6 +71,10 @@ class Lever {
     
     // Create the joint
     joint = (RevoluteJoint) box2d.world.createJoint(rjd); 
+    
+    trebframe = loadImage("treb-frame.png");        // use png for transparency
+    trebbeamthick = loadImage("treb-beam-thick.png");
+    trebbeamthin = loadImage("treb-beam-thin.png");
   }
   
   void killAll() {
@@ -79,26 +84,26 @@ class Lever {
 
   void display() {
     
-    support.display();
-    lever.display();
-
-    // Draw (internal) pivoting anchor, just for debug
     Vec2 anchor = box2d.coordWorldToPixels(lever.body.getWorldCenter());
-    fill(0);
+    float a = lever.body.getAngle();
+    
+    // the lever / beam
+    pushMatrix();
+    translate(anchor.x,anchor.y);
+    rotate(-a);
+    float ctrthinx = (-beamratio-1)*leverW/4; // x center of the thin portion of the beam 
+    image(trebbeamthin, ctrthinx-trebbeamthin.width/2,-trebbeamthin.height/2);
+    image(trebbeamthick,-trebbeamthick.width/2,-trebbeamthick.height/2);
+    popMatrix();
+    
+    //support
+    image(trebframe,0,-supportH);
+    
+    // Draw (internal) pivoting anchor
+    fill(51, 34, 26);
     noStroke();
     ellipse(anchor.x, anchor.y, 8, 8);
     
-    Vec2 ctr = box2d.coordWorldToPixels(lever.body.getWorldCenter());
-    float a = lever.body.getAngle();
-    Vec2 end1 = new Vec2(-leverW/2, 0);
-    Vec2 end2 = new Vec2(-beamratio*leverW/2, 0);
-    pushMatrix();
-    translate(ctr.x,ctr.y);
-    rotate(-a);
-    stroke(127);
-    strokeWeight(2);
-    line(end1.x, end1.y, end2.x, end2.y);
-    popMatrix();
   }
 }
 

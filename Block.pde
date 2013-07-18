@@ -2,6 +2,7 @@ class Block {
  
   Body body;
   float w, h;
+  PImage stick;
   
   Block (float _x, float _y, float _w, float _h) {
     w = _w;
@@ -31,6 +32,8 @@ class Block {
 
     // Attach Fixture to Body               
     body.createFixture(fd);
+    
+    stick = loadImage("stick.png");        // use png for transparency
   }
  
   void killBody() {
@@ -43,10 +46,7 @@ class Block {
     rectMode(PConstants.CENTER);
     pushMatrix();
     translate(pos.x,pos.y);
-    fill(225);
-    stroke(200);
-    strokeWeight(1);
-    rect(0,0,w,h);
+    image(stick,-w,-h/2);
     popMatrix();
   }
   

@@ -1,4 +1,4 @@
-// The Nature of Code
+// Adapted from The Nature of Code
 // Daniel Shiffman
 // http://natureofcode.com
 
@@ -44,23 +44,6 @@ class Box {
   // This function removes the particle from the box2d world
   void killBody() {
     box2d.destroyBody(body);
-  }
-
-  // Drawing the box
-  void display() {
-    
-    Vec2 pos = box2d.getBodyPixelCoord(body);
-    float a = body.getAngle();
-
-    rectMode(PConstants.CENTER);
-    pushMatrix();
-    translate(pos.x,pos.y);
-    rotate(-a);
-    fill(127);
-    stroke(0);
-    strokeWeight(2);
-    rect(0,0,w,h);
-    popMatrix();
   }
 }
 

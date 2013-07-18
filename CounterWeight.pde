@@ -15,6 +15,8 @@ class CounterWeight {
   Body body;     
   float x,y,w,h;
   
+  PImage trebcw;
+  
   void reset() {
     setup();
   }
@@ -55,6 +57,7 @@ class CounterWeight {
     this.w = w;
     this.h = h;
     setup();
+    trebcw = loadImage("treb-cw.png");        // use png for transparency
   }
   
   void killBody() {
@@ -81,11 +84,7 @@ class CounterWeight {
     pushMatrix();
     translate(pos.x,pos.y);    // Using the Vec2 position and float angle to
     rotate(-a);              // translate and rotate the rectangle
-    fill(127);
-    stroke(0);
-    strokeWeight(2);
-    rectMode(CENTER);
-    rect(0,0,w,h);
+    image(trebcw,-trebcw.width/2, -trebcw.height/2);
     popMatrix();
   }
 

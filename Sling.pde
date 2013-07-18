@@ -4,6 +4,8 @@ class Sling {
   float w;
   float h;
   
+  PImage trebpouch;
+  
   Sling(Vec2 top, float w_, float h_) {
     w = w_;
     h = h_;
@@ -32,6 +34,8 @@ class Sling {
     fd.restitution = 0.5;
 
     body.createFixture(fd);
+    
+    trebpouch = loadImage("treb-pouch.png");
   }
   
    Vec2 getLocalAnchorA() {
@@ -69,10 +73,11 @@ class Sling {
     pushMatrix();
     translate(pos.x,pos.y);
     rotate(-a);
-    fill(127);
-    stroke(0);
-    strokeWeight(2);
+    fill(170,129,84); // manila rope color
+    stroke(170,129,84);
+    strokeWeight(1);
     rect(0,0,w,h);
+    image(trebpouch, -trebpouch.width/2, trebpouch.height/2+2);
     popMatrix();
   }
 }

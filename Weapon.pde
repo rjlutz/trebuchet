@@ -11,6 +11,8 @@ class Weapon {
   RevoluteJoint rj, rjS, rjP;
   WeaponState state;
   Block block;
+  
+  long launchtime;
 
   Weapon() {
     setState(WeaponState.START);
@@ -24,13 +26,13 @@ class Weapon {
    // establish/reestablish trebuchet componenets
       // when re-establishing, need to remove the item from box2d's model before establishing replacement object 
       if (cw != null) cw.killBody();
-      cw = new CounterWeight(125, height-50, 20, 20);
+      cw = new CounterWeight(125, height-76, 20, 20);
       if (lever != null) lever.killAll();
-      lever = new Lever(100, height-70, 50, 4, 4, 15);
+      lever = new Lever(100, height-96, 50, 4, 4, 15);
       if (sling != null) sling.killBody();
       sling = new Sling(lever.getPixelsAnchorB(box2d), 1, 20);
       if (block != null) block.killBody();
-      block = new Block(125, height-20, 10, 40);    //joint: lever to counterweight
+      block = new Block(125, height-46, 10, 40);    //joint: lever to counterweight
       if (projectile != null) projectile.killBody();
       projectile = new Projectile(sling.getPixelsAnchorB(box2d), 5);
       
@@ -82,6 +84,7 @@ class Weapon {
       }
       box2d.world.destroyJoint((RevoluteJoint)rjP);
       rjP = null;
+      launchtime = millis();
       
     } else if (w == WeaponState.LANDED) {
       
@@ -102,7 +105,7 @@ class Weapon {
     // test for landing of projectile
     if (weapon.getState() == WeaponState.LAUNCHED) {
       float projelev = box2d.coordWorldToPixels(weapon.getProjectile().getWorldCenter()).y;
-      if(projelev > (height-20)) {
+      if(projelev > (height-46)) {
         weapon.setState(WeaponState.LANDED);
       }
     }
@@ -110,9 +113,12 @@ class Weapon {
     //check for projectile landed and stopped moving
     if (weapon.getState() == WeaponState.LANDED) {
       float boulderX = box2d.coordWorldToPixels(weapon.getProjectile().getWorldCenter()).x;
+      long flightelapsed = millis() - launchtime;
       if (( projectile.getVelocity() < 0.10 && projectile.getAngularVelocity() < 0.01) ||
             boulderX < 0 || 
-            boulderX > width) { 
+            boulderX > width ||
+            flightelapsed > 10000) { 
+        delay(750);
         weapon.setState(WeaponState.REST);
       }
     }
@@ -132,11 +138,12 @@ class Weapon {
   void display() {
 
     // display the trebuchet components
+    if (block != null) block.display();
     cw.display();
     lever.display();
     projectile.display();
     if (sling != null) sling.display();
-    if (block != null) block.display();
+    
 
     //line connecting cw and lever
     Vec2 end1 = cw.getPixelsAnchorA(box2d);

@@ -38,19 +38,6 @@ class Projectile {
   Vec2 getWorldCenter() {
     return body.getWorldCenter();  
   }
-  
-
-//  // Is the particle ready for deletion?
-//  boolean done() {
-//    // Let's find the screen position of the particle
-//    Vec2 pos = box2d.getBodyPixelCoord(body);  
-//    // Is it off the bottom of the screen?
-//    if (pos.y > height+w*h) {
-//      killBody();
-//      return true;
-//    }
-//    return false;
-//  }
 
    void display() {
     Vec2 pos = box2d.getBodyPixelCoord(body);
@@ -62,9 +49,10 @@ class Projectile {
     fill(175);
     stroke(0);
     strokeWeight(1);
-    ellipse(0,0,r*2,r*2);
+    //ellipse(0,0,r*2,r*2);
     // Let's add a line so we can see the rotation
-    line(0,0,r,0);
+    //line(0,0,r,0);
+    image(boulder,-r,-r);
     popMatrix();
   }
 
