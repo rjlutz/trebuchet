@@ -11,6 +11,7 @@
 // angry birds ref image http://www.toptechreviews.net/wp-content/uploads/2013/01/angry_birds.jpg
 
 // http://blog.timesunion.com/derosier/files/2012/01/0113_derosier1002.jpg
+// https://kuler.adobe.com
 
 import pbox2d.*;
 import org.jbox2d.dynamics.joints.*;
@@ -38,7 +39,7 @@ String gamemessage;
 PFont f;
 PImage background, boulder, bigboulder;
 color bgColor;
-PlayButton playbutton;
+Button playbutton;
 
 void setup() {
   size(1200, 500);
@@ -48,13 +49,13 @@ void setup() {
   gameinit();
   soundinit();
   if (!disableSounds) loop.play();
-  f = createFont("Handwriting-Dakota", 16, true);           // Arial, 16 point, anti-aliasing on
+  f = createFont("Handwriting-Dakota", 16, true);           // 16 point, anti-aliasing on
   background = loadImage("treb-back.jpg");
   boulder = loadImage("boulder.png");        // use png for transparency
   bigboulder = loadImage("boulder.png"); 
   bigboulder.resize(bigboulder.width*2, bigboulder.height*2);              // for the 'boulders remaining' key
   
-  playbutton = new PlayButton(width/2, height/2+40, 148, 91);
+  playbutton = new Button("Play", width/2, height/2+80, loadImage("playbutton.png"));
 }
 
 void gameinit() {
@@ -75,22 +76,22 @@ void soundinit() {
   // sound initialization
   maxim = new Maxim(this);
   slowwind = maxim.loadFile("slowwind.wav");
-  slowwind.volume(1.0);
+  slowwind.volume(3.0);
   slowwind.speed(1.0);
   slowwind.setLooping(false); 
 
   slam = maxim.loadFile("slam.wav");
-  slam.volume(1.0);
+  slam.volume(3.0);
   slam.speed(1.0);
   slam.setLooping(false);
 
   loop = maxim.loadFile("Rising Shadows - Imagine The Place Of Nothingness.wav");
-  loop.volume(0.9);
+  loop.volume(2.0);
   loop.speed(1.0);
   loop.setLooping(true);
 
   release = maxim.loadFile("008729634-catapult.wav");
-  release.volume(2.0);
+  release.volume(1.10);
   release.speed(1.0);
   release.setLooping(false);
 }
@@ -171,6 +172,7 @@ void keyPressed() {
     weapon.setState(WeaponState.START); // arm weapon
     numboulders--;
   }
+  if (key == 's')  disableSounds=!disableSounds;
   if (key == 'p')  paused = !paused;
   if (key == 'r')  gameinit();
 }
