@@ -4,12 +4,16 @@ class StoneBeam {
   
   Body body;
   float w, h;
+  float origX, origY;
+  float origAng;
   
   PImage stonesmall, stonebig;
   
   StoneBeam(int _x, int _y, int _w, int _h) {
     w = _w;
     h = _h;
+    origX = _x;
+    origY = _y;
     
     BodyDef bd = new BodyDef();      
     bd.type = BodyType.DYNAMIC;
@@ -33,9 +37,20 @@ class StoneBeam {
 
     // Attach Fixture to Body               
     body.createFixture(fd);
+    origAng = body.getAngle();
     
     stonesmall = loadImage("stonesmall.png");
     stonebig = loadImage("stonebig.png");
+  }
+  
+  float getYDisp() {
+    float curY = box2d.coordWorldToPixels(body.getWorldCenter()).y;
+    return abs(curY-origY);
+  }
+  
+  float getAngDisp() {
+    float curAng = body.getAngle();
+    return abs(curAng-origAng);
   }
  
   void killBody() {

@@ -1,7 +1,7 @@
 // A fixed boundary class
 class Boundary {
 
-  // A boundary is a simple rectangle with x,y,width,and height
+  // A boundary is a simple rectangle with x, y, width, and height
   float x;
   float y;
   float w;
@@ -43,7 +43,8 @@ class Boundary {
     rect(x,y,w,h);
   }
   
-  void killBody() {
+  // provide ability to remove thisitem from the physics engine
+  void killAll() {
     box2d.destroyBody(b);
   }
 

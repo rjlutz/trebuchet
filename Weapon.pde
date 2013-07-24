@@ -4,15 +4,17 @@ import org.jbox2d.dynamics.contacts.*;
 
 class Weapon { 
 
+  // weapon components
   CounterWeight cw;
   Lever lever;
   Sling sling;
   Projectile projectile;
-  RevoluteJoint rj, rjS, rjP;
-  WeaponState state;
   Block block;
+  RevoluteJoint rj, rjS, rjP;
   
-  long launchtime;
+  
+  WeaponState state; // state machine model
+  long launchtime;   // used for UI timeouts
 
   Weapon() {
     setState(WeaponState.START);
@@ -94,7 +96,7 @@ class Weapon {
       
     } else if (w == WeaponState.REST) {
       
-      // TODO maybe animate the bould explding here, with a sound
+      // TODO maybe animate the boulder exploding here, with a sound
       
     }
     state=w;
@@ -114,29 +116,27 @@ class Weapon {
     if (weapon.getState() == WeaponState.LANDED) {
       float boulderX = box2d.coordWorldToPixels(weapon.getProjectile().getWorldCenter()).x;
       long flightelapsed = millis() - launchtime;
+      
       if (( projectile.getVelocity() < 0.10 && projectile.getAngularVelocity() < 0.01) ||
             boulderX < 0 || 
             boulderX > width ||
             flightelapsed > 10000) { 
-        delay(750);
+        //delay(750);
         weapon.setState(WeaponState.REST);
       }
     }
     
   }
 
-  void applylift() {
-   
+  void applylift() {  
     if (block != null) {
       block.killBody();
       block = null;
     }
-    lever.lever.body.applyForce(new Vec2(0, -10000), lever.getWorldAnchorB());
-    
+    lever.lever.body.applyForce(new Vec2(0, -10000), lever.getWorldAnchorB());   
   }
 
   void display() {
-
     // display the trebuchet components
     if (block != null) block.display();
     cw.display();
@@ -144,30 +144,25 @@ class Weapon {
     projectile.display();
     if (sling != null) sling.display();
     
-
     //line connecting cw and lever
     Vec2 end1 = cw.getPixelsAnchorA(box2d);
     Vec2 end2 = lever.getPixelsAnchorA(box2d);
     stroke(50);
     strokeWeight(1);
     line(end1.x, end1.y, end2.x, end2.y);
-    
   }
 
   Projectile getProjectile() {
-    
-    return projectile;
-    
+    return projectile;   
   }
   
-  void killAll() {
-    
+  // provide ability to remove thisitem from the physics engine
+  void killAll() { 
     if (cw != null) cw.killBody();
     if (lever != null) lever.killAll();
     if (projectile != null) projectile.killBody();
     if (sling != null) sling.killBody();
     if (block != null) block.killBody();
-    
   }
 
 }

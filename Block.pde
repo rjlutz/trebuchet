@@ -19,9 +19,9 @@ class Block {
     PolygonShape ps = new PolygonShape();
     float box2dW = box2d.scalarPixelsToWorld(w/2);
     float box2dH = box2d.scalarPixelsToWorld(h/2);  // Box2D considers the width and height of a
-    ps.setAsBox(box2dW, box2dH);            // rectangle to be the distance from the
-                           // center to the edge (so half of what we
-                          // normally think of as width or height.) 
+    ps.setAsBox(box2dW, box2dH);                    // rectangle to be the distance from the
+                                                    // center to the edge (so half of what we
+                                                    // normally think of as width or height.) 
     // Define a fixture
     FixtureDef fd = new FixtureDef();
     fd.shape = ps;
@@ -36,18 +36,18 @@ class Block {
     stick = loadImage("stick.png");        // use png for transparency
   }
  
+ // provide ability to remove thisitem from the physics engine
   void killBody() {
     box2d.destroyBody(body);
   }
   
   void display() {
     Vec2 pos = box2d.getBodyPixelCoord(body);
-
     rectMode(PConstants.CENTER);
     pushMatrix();
     translate(pos.x,pos.y);
     image(stick,-w,-h/2);
-    popMatrix();
+    popMatrix(); 
   }
   
 }

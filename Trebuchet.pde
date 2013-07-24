@@ -1,45 +1,32 @@
-// http://en.wikipedia.org/wiki/Trebuchet
-// http://www.real-world-physics-problems.com/trebuchet-physics.html
-// http://www.algobeautytreb.com/trebmath35.pdf
-
-// music from http://freedownloads.last.fm/download/240627899/Imagine%2BThe%2BPlace%2BOf%2BNothingness.mp3
-// sound effect https://www.pond5.com/sound-effect/8729634/catapult.html
-// other sounds from the family's summer cabin (slamming door, creaking door)
-
-// the nature of code
-
-// angry birds ref image http://www.toptechreviews.net/wp-content/uploads/2013/01/angry_birds.jpg
-
-// http://blog.timesunion.com/derosier/files/2012/01/0113_derosier1002.jpg
-// https://kuler.adobe.com
-
 import pbox2d.*;
 import org.jbox2d.dynamics.joints.*;
 import org.jbox2d.dynamics.contacts.*;
 
-PBox2D box2d;
-Boundary ground;
-Weapon weapon;
+PBox2D box2d;                  // physics environment
+Boundary ground;               // the floor
+Weapon weapon;                 // the trebuchet
 
-Maxim maxim;
-AudioPlayer slowwind;
-AudioPlayer fastwind;
-AudioPlayer slam;
-AudioPlayer loop;
-AudioPlayer release;
+Maxim maxim;                   // helper library
+AudioPlayer slowwind;          // slow winding of trebuchet weapon
+AudioPlayer fastwind;          // fast winding 
+AudioPlayer slam;              // projectile landing noise
+AudioPlayer loop;              // background music
+AudioPlayer release;           // swoosh noise
 
-Structure structure;
+Structure structure;           // object to hold the target
 
-int numboulders = 0;
-boolean paused = false;
+int numboulders = 0;           // total # per game
+boolean paused = false;        // flag
 boolean disableSounds = false; // true for faster debugging, false for production
-boolean gameover = true;
-String gamemessage;
+boolean gameover = true;       // flag
+String gamemessage;            // For success or failure
 
-PFont f;
-PImage background, boulder, bigboulder;
-color bgColor;
-Button playbutton;
+PFont f;                       // default for screen messages 
+PImage background;             // backgrounf canvas
+PImage boulder;                // image for projectile
+PImage bigboulder;             // scale projectile larger for screen display of boulders remaining
+color textColor;               // used for text foreground
+Button playbutton;             // starts game
 
 void setup() {
   size(1200, 500);
@@ -49,30 +36,35 @@ void setup() {
   gameinit();
   soundinit();
   if (!disableSounds) loop.play();
-  f = createFont("Handwriting-Dakota", 16, true);           // 16 point, anti-aliasing on
+  f = createFont("Handwriting-Dakota", 16, true); // 16 point, anti-aliasing on
   background = loadImage("treb-back.jpg");
-  boulder = loadImage("boulder.png");        // use png for transparency
+  boulder = loadImage("boulder.png");             // use png for transparency
   bigboulder = loadImage("boulder.png"); 
-  bigboulder.resize(bigboulder.width*2, bigboulder.height*2);              // for the 'boulders remaining' key
+  bigboulder.resize(bigboulder.width*2, bigboulder.height*2);  // for the 'boulders remaining' key
   
-  playbutton = new Button("Play", width/2, height/2+80, loadImage("playbutton.png"));
+  playbutton = new Button("Play", width/2, height*5/8, loadImage("playbutton.png")); // slightly below center
+  playbutton.setVisible(true); // no game at startup
 }
 
 void gameinit() {
+  
   numboulders = 5;
   gamemessage = "";
-  if (ground != null) ground.killBody();
+  
+  // for all of the following, we need to remove each item from box2d if it already exists from a prior game
+  // priot to instantiation
+  if (ground != null) ground.killAll(); 
   ground = new Boundary(width/2, height-31, width, 10);
   if (structure != null) structure.killAll();
   structure = new Structure();
   if (weapon != null) weapon.killAll();
   weapon = new Weapon();
+  
 }
 
 void soundinit() { 
 
   if (disableSounds) return;
-
   // sound initialization
   maxim = new Maxim(this);
   slowwind = maxim.loadFile("slowwind.wav");
@@ -81,7 +73,7 @@ void soundinit() {
   slowwind.setLooping(false); 
 
   slam = maxim.loadFile("slam.wav");
-  slam.volume(3.0);
+  slam.volume(2.5);
   slam.speed(1.0);
   slam.setLooping(false);
 
@@ -98,41 +90,48 @@ void soundinit() {
 
 void draw() {
 
-  background(255);
   image(background, 0, 0);
   if (!paused) {
     if (weapon.getState() == WeaponState.LIFTING) {
       weapon.applylift();
     }
-    box2d.step();  // We must always step through time!
+    box2d.step();  // step through time!
+    if (structure.getMaxBeamVelocity() < 1.0 ) { //skip update when structure is swaying
+      weapon.updateState();
+    }
   }
 
   // display the items
   weapon.display();
   ground.display();
   structure.display();
+  playbutton.display();
 
-  weapon.updateState();
   if (!structure.isStanding()) {
     gameover = true;
-    bgColor = color(186, 219, 53); // bright green, happy! 
+    textColor = color(186, 219, 53); // bright green, happy! 
     gamemessage = "Success!";
+    playbutton.setVisible(true);
   }
 
   //boulder decoration and boulders remaining
-  image(bigboulder, 40, 50);
-  textFont(f, 40);                 
-  fill(126, 126, 126);                       
-  text(numboulders, 80, 68); 
+  if (!gameover) {
+    image(bigboulder, 40, 50);
+    textFont(f, 40);                 
+    fill(126, 126, 126);                       
+    text(numboulders, 80, 68); 
+  }
 
   if (weapon.getState() == WeaponState.REST) {
     if (!gameover) {
+      delay(750);
       numboulders--;
     }
     if (!gameover && numboulders <= 0) {
       gameover = true;
-      bgColor = color(51, 34, 26); // brown, more somber
+      textColor = color(51, 34, 26); // brown, more somber
       gamemessage = "You lose ...";
+      playbutton.setVisible(true);
     }
     weapon.setState(WeaponState.START);
   }
@@ -140,17 +139,17 @@ void draw() {
   if (gameover) {
     textFont(f, 72); // game state message
     textAlign(CENTER);
-    fill (bgColor);
-    text (gamemessage, width/2, height/2);
-    playbutton.display();
+    fill (textColor);
+    text (gamemessage, width/2, height*3/8);  // slightly above center
   }
   
 }
 
 void mousePressed() {
-  if (gameover && playbutton.contains(mouseX, mouseY)) {
+  if (playbutton.isVisible() && playbutton.contains(mouseX, mouseY)) {
     gameover = false;
     gameinit();
+    playbutton.setVisible(false);
     return;
   }
   if (!gameover && weapon.getState() == WeaponState.START) {
@@ -169,11 +168,12 @@ void mouseReleased() {
 
 void keyPressed() {
   if (key == 'a') {
-    weapon.setState(WeaponState.START); // arm weapon
+    weapon.setState(WeaponState.START); // arm weapon, sppeds up the process when player impatient
     numboulders--;
   }
   if (key == 's')  disableSounds=!disableSounds;
   if (key == 'p')  paused = !paused;
   if (key == 'r')  gameinit();
+  if (key == 'q') exit();
 }
 
