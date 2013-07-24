@@ -171,7 +171,13 @@ void keyPressed() {
     weapon.setState(WeaponState.START); // arm weapon, sppeds up the process when player impatient
     numboulders--;
   }
-  if (key == 's')  disableSounds=!disableSounds;
+  if (key == 's')  {
+    disableSounds=!disableSounds;
+    if (loop.isPlaying()) 
+      loop.stop();
+    else 
+      loop.play();
+  }
   if (key == 'p')  paused = !paused;
   if (key == 'r')  gameinit();
   if (key == 'q') exit();
