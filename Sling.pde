@@ -54,7 +54,7 @@ class Sling {
     return body.getWorldCenter().add(getLocalAnchorB());
   }
   
-  Vec2 getPixelsAnchorB(PBox2D box2d) {
+  Vec2 getPixelsAnchorB(Box2DProcessing box2d) {
     return box2d.coordWorldToPixels(getWorldAnchorB());
   }
 

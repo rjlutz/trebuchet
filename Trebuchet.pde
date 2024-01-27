@@ -1,8 +1,8 @@
-import pbox2d.*;
+import shiffman.box2d.*;
 import org.jbox2d.dynamics.joints.*;
 import org.jbox2d.dynamics.contacts.*;
 
-PBox2D box2d;                  // physics environment
+Box2DProcessing box2d;                  // physics environment
 Boundary ground;               // the floor
 Weapon weapon;                 // the trebuchet
 
@@ -30,7 +30,7 @@ Button playbutton;             // starts game
 
 void setup() {
   size(1200, 500);
-  box2d = new PBox2D(this);
+  box2d = new Box2DProcessing(this);
   box2d.createWorld();
   box2d.setGravity(0, -10);
   gameinit();
@@ -182,4 +182,3 @@ void keyPressed() {
   if (key == 'r')  gameinit();
   if (key == 'q') exit();
 }
-

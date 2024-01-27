@@ -5,7 +5,7 @@
  
 */
 
-import pbox2d.*;
+import shiffman.box2d.*;
 import org.jbox2d.collision.shapes.*;
 import org.jbox2d.common.*;
 import org.jbox2d.dynamics.*;
@@ -72,7 +72,7 @@ class CounterWeight {
     return body.getWorldCenter().add(getLocalAnchorA());
   }
   
-  Vec2 getPixelsAnchorA(PBox2D box2d) {
+  Vec2 getPixelsAnchorA(Box2DProcessing box2d) {
     return box2d.coordWorldToPixels(getWorldAnchorA());
   }
 
@@ -89,4 +89,3 @@ class CounterWeight {
   }
 
 }
-
